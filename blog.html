@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+</head>
+<body>
+    <script src="configuration.js"></script> 
+
+    <!-- Navigation Bar -->
+  <ul class="topnav">
+    <li><a class="active" href="index.html">RBVenture</a></li>
+    <li class="right"><a href="login.html">Login</a></li>
+    <li class="right"><a href="moments.html"> View your Moments</a></li>
+    <li class="right"><a href="team.html">Meet the Team</a></li>
+    <li class="right"><a href="beta.html">Beta Access</a></li>
+
+</ul>   
+
+<div id="adding-blog-node" class="col-10" style="font-size: 25px">
+    <div class="row">
+        <button onclick=>addBlogNode()</button>
+    </div>
+  
+    
+  </div>
+
+
+  <script>
+    updateTheNavigationBar();
+
+    let host = getHost();
+    let blognode = [];
+    let images = [];
+    displayBlogNode();
+
+    
+    async function addBlogNode() {
+        let message = "";
+        const token = getTheToken();
+
+        let request = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin": "*",
+                'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(blognode),
+    };
+}
+  </script>
+</body>
+</html>
+
+
