@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make a quiz</title>
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="cards.css" />
+
+</head>
+
+<style>
+  /* Modal styles */
+  .modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+  }
+
+  /* Modal content box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+  }
+
+  /* Close button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+</style>
+
+<body>
+  <script src="configuration.js"></script>
+  <ul class="topnav">
+    <li><a class="active" href="index.html">RBVenture</a></li>
+    <li class="right"><a href="login.html">Login</a></li>
+    <li class="right"><a href="moments.html"> View your Moments</a></li>
+    <li class="right"><a href="team.html">Meet the Team</a></li>
+    <li class="right"><a href="beta.html">Beta Access</a></li>
+
+  </ul>
+
+  <div > 
+    <h1>Make a Memory</h1>
+    <button id="newBlogButton" onclick="document.getElementById('blogForm').style.display='block'">New Memory</button>
+  </div>
+  <!-- Popup modal -->
+  <form id="blogForm">
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title"><br>
+    <label for="description">Description:</label><br>
+    <textarea id="description" name="description"></textarea><br>
+    <label for="dateTime">Date and Time:</label><br>
+    <input type="datetime-local" id="dateTime" name="dateTime"><br>
+    <!-- Assign saveTheBlog() function to the submit button's onclick event -->
+    <button type="button" onclick="saveBlog()">Submit</button>
+  </form>
+
+  </div>
+  <div class="questions">
+    <h2>click on the memories to edit information</h2>
+    <h3></h3>
+    <div id="list" class="cards"></div>
+  </div>
+  <div id="blog" class="blogcollection">>
+    <div class="blog-container">
+      <h4>blog collection</h4>
+      <form id="blogCollection">
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    updateTheNavigationBar();
+
+    let host = getHost();
+
+    async function saveTheBlog() {
+  let title = document.getElementById("title").value;
+  let description = document.getElementById("description").value;
+  let dateTime = document.getElementById("dateTime").value;
+
+  let endpoint = "";
+  const token = localStorage.getItem("token");
+  let request = {};
+
+  if (!blogId) {
+    endpoint = host + "/blog";
+    request = {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}` // Include Bearer token in the headers
+      },
+      body: JSON.stringify({ "title": title, "description": description, "dateTime": dateTime })
+    };
+  } else {
+    endpoint = host + "/blog/" + blogId;
+    request = {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}` // Include Bearer token in the headers
+      },
+      body: JSON.stringify({ "id": blogId, "title": title, "description": description, "dateTime": dateTime })
+    };
+  }
+
+  let response = await fetch(endpoint, request);
+  if (response.status === 200) {
+    blogId = await response.json();
+    alert("The blog was saved successfully!");
+  } else {
+    alert("The blog was not saved. Something went wrong.")
+  }
+}
+
+
+
+    async function saveTheQuiz() {
+      let quizTitle = document.getElementById("quizTitle").value;
+      let endpoint = "";
+      const token = localStorage.getItem("token");
+      let request = {};
+      if (!quizId) {
+        endpoint = host + "/blog";
+        request = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // Include Bearer token in the headers
+
+          },
+          body: JSON.stringify({ "title": quizTitle, "questionIds": quizQuestions }),
+        };
+      } else {
+        endpoint = host + "/blog/" + quizId;
+        request = {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // Include Bearer token in the headers
+
+          },
+          body: JSON.stringify({ "id": quizId, "title": quizTitle, "questionIds": quizQuestions }),
+        };
+      }
+
+      let response = await fetch(endpoint, request);
+      if (response.status == 200) {
+        quizId = await response.json();
+        alert("The quiz was saved successfully!");
+      }
+      else {
+        alert("The quiz was not saved. Something went wrong.")
+      }
+    }
+
+
+    async function displayTheBlogs() {
+      // Fetch blogs from the backend
+      let response = await fetch(host + '/blog');
+      let blogs = await response.json();
+
+      let list = document.getElementById("list");
+      list.innerHTML = "";
+
+      for (let blog of blogs) {
+        let div = document.createElement("div");
+        div.id = `${blog.id}`;
+        div.className = "card";
+        div.onclick = function () {
+          location.href = `blog.html?id=${blog.id}`;
+        };
+        let innerHtml = `           
+          <div class="container">
+            <h4><b>${blog.title}</b></h4> 
+            <p>${blog.description}</p>   
+            <p>(${blog.blogNodeIds.length} blog nodes)</p>           
+          </div>       
+              `;
+        div.innerHTML = innerHtml;
+        list.appendChild(div);
+      }
+    }
+    async function saveBlog() {
+      let title = document.getElementById("title").value;
+      let description = document.getElementById("description").value;
+      let dateTime = document.getElementById("dateTime").value;
+
+      let endpoint = host + "/blog";
+      const token = localStorage.getItem("token");
+      let request = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // Include Bearer token in the headers
+        },
+        body: JSON.stringify({ "title": title, "description": description, "dateTime": dateTime })
+      };
+
+      let response = await fetch(endpoint, request);
+      if (response.status === 200) {
+        alert("The blog was saved successfully!");
+        document.getElementById("blogForm").style.display = "none";
+        displayTheBlogs();
+      } else {
+        alert("The blog was not saved. Something went wrong.")
+      }
+    }
+    displayTheBlogs();
+  </script>
+</body>
+
+</html>
