@@ -54,6 +54,37 @@
     text-decoration: none;
     cursor: pointer;
   }
+
+  .popup {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: #fff;
+  width: 50%;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.close:hover {
+  color: red;
+}
+
 </style>
 
 <body>
@@ -66,22 +97,24 @@
     <li class="right"><a href="beta.html">Beta Access</a></li>
 
   </ul>
+  
 
-  <div > 
-    <h1>Make a Memory</h1>
-    <button id="newBlogButton" onclick="document.getElementById('blogForm').style.display='block'">New Memory</button>
-  </div>
-  <!-- Popup modal -->
-  <form id="blogForm">
-    <label for="title">Title:</label><br>
+  <button id="newMemoryBtn">New Memory</button>
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <span class="close">&times;</span>
+      <h2>New Memory</h2>
+      <form id="memoryForm">
+        <label for="title">Title:</label><br>
     <input type="text" id="title" name="title"><br>
     <label for="description">Description:</label><br>
     <textarea id="description" name="description"></textarea><br>
     <label for="dateTime">Date and Time:</label><br>
     <input type="datetime-local" id="dateTime" name="dateTime"><br>
-    <!-- Assign saveTheBlog() function to the submit button's onclick event -->
     <button type="button" onclick="saveBlog()">Submit</button>
-  </form>
+      </form>
+    </div>
+  </div>
 
   </div>
   <div class="questions">
@@ -101,6 +134,29 @@
   <script>
     updateTheNavigationBar();
 
+    document.addEventListener("DOMContentLoaded", function() {
+  const newMemoryBtn = document.getElementById("newMemoryBtn");
+  const popup = document.getElementById("popup");
+  const closeBtn = document.querySelector(".close");
+  const memoryForm = document.getElementById("memoryForm");
+
+  newMemoryBtn.addEventListener("click", function() {
+    popup.style.display = "block";
+  });
+
+  closeBtn.addEventListener("click", function() {
+    popup.style.display = "none";
+  });
+
+  memoryForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    // Here you can handle the form submission, for example, sending data to a server.
+    // For demonstration purposes, let's just close the popup.
+    popup.style.display = "none";
+  });
+});
+
+
     let host = getHost();
 
     async function saveTheBlog() {
@@ -117,7 +173,11 @@
     request = {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}` // Include Bearer token in the headers
+        "Content-Type": "application/json", 
+        "Access-Control-Allow-Origin": "*",
+        "Authorization": `Bearer ${token}`
+        
+         // Include Bearer token in the headers
       },
       body: JSON.stringify({ "title": title, "description": description, "dateTime": dateTime })
     };
@@ -126,6 +186,8 @@
     request = {
       method: "PUT",
       headers: {
+        "Content-Type": "application/json", 
+        "Access-Control-Allow-Origin": "*",
         "Authorization": `Bearer ${token}` // Include Bearer token in the headers
       },
       body: JSON.stringify({ "id": blogId, "title": title, "description": description, "dateTime": dateTime })
@@ -140,48 +202,6 @@
     alert("The blog was not saved. Something went wrong.")
   }
 }
-
-
-
-    async function saveTheQuiz() {
-      let quizTitle = document.getElementById("quizTitle").value;
-      let endpoint = "";
-      const token = localStorage.getItem("token");
-      let request = {};
-      if (!quizId) {
-        endpoint = host + "/blog";
-        request = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` // Include Bearer token in the headers
-
-          },
-          body: JSON.stringify({ "title": quizTitle, "questionIds": quizQuestions }),
-        };
-      } else {
-        endpoint = host + "/blog/" + quizId;
-        request = {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` // Include Bearer token in the headers
-
-          },
-          body: JSON.stringify({ "id": quizId, "title": quizTitle, "questionIds": quizQuestions }),
-        };
-      }
-
-      let response = await fetch(endpoint, request);
-      if (response.status == 200) {
-        quizId = await response.json();
-        alert("The quiz was saved successfully!");
-      }
-      else {
-        alert("The quiz was not saved. Something went wrong.")
-      }
-    }
-
 
     async function displayTheBlogs() {
       // Fetch blogs from the backend
@@ -235,6 +255,8 @@
       }
     }
     displayTheBlogs();
+
+    
   </script>
 </body>
 
