@@ -1,7 +1,7 @@
 const mode = 0;
 
 const host_local = "http://localhost:8080";
-const host_remote = "https://dashboard.render.com/web/srv-coi8dm0l5elc73d33pp0/deploys/dep-coi8dmol5elc73d33q0g?r=2024-04-21%4003%3A23%3A11%7E2024-04-21%4003%3A29%3A13";
+const host_remote = "https://rbventure-latest.onrender.com";
 
 function getHost() {
     return (mode == 0) ? host_local : host_remote;
