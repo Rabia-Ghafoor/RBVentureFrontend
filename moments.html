@@ -92,13 +92,18 @@
    <!-- Navigation Bar -->
    <ul class="topnav">
     <li><a class="active" href="index.html">RBVenture</a></li>
-    <li class="right"><a href="login.html">Login</a></li>
     <li class="right"><a href="moments.html"> View your Moments</a></li>
     <li class="right"><a href="team.html">Meet the Team</a></li>
     <li class="right"><a href="beta.html">Beta Access</a></li>
+<<<<<<< Updated upstream
     <li class="right"><a href="contact.html">Contact Us </a></li>
 </ul> 
   
+=======
+    <li class="right"><a href="login.html">Login</a></li>
+
+</ul>  
+>>>>>>> Stashed changes
 
   <button id="newMemoryBtn">New Memory</button>
   <div id="popup" class="popup">
@@ -123,12 +128,8 @@
     <h3></h3>
     <div id="list" class="cards"></div>
   </div>
-  <div id="blog" class="blogcollection">>
-    <div class="blog-container">
-      <h4>blog collection</h4>
-      <form id="blogCollection">
-
-      </form>
+    <div>
+      Remember all of your dreams!
     </div>
   </div>
 
@@ -153,6 +154,12 @@
     event.preventDefault();
     // Here you can handle the form submission, for example, sending data to a server.
     // For demonstration purposes, let's just close the popup.
+    popup.style.display = "none";
+  });
+
+  // Add event listener to the button to close the popup
+  const submitButton = document.getElementById("submitBtn");
+  submitButton.addEventListener("click", function() {
     popup.style.display = "none";
   });
 });
@@ -204,58 +211,116 @@
   }
 }
 
-    async function displayTheBlogs() {
-      // Fetch blogs from the backend
-      let response = await fetch(host + '/blog');
-      let blogs = await response.json();
 
-      let list = document.getElementById("list");
-      list.innerHTML = "";
+// Function to get the token from local storage
+function getTheToken() {
+  return localStorage.getItem('token');
+}
 
-      for (let blog of blogs) {
-        let div = document.createElement("div");
-        div.id = `${blog.id}`;
-        div.className = "card";
-        div.onclick = function () {
-          location.href = `blog.html?id=${blog.id}`;
-        };
-        let innerHtml = `           
-          <div class="container">
-            <h4><b>${blog.title}</b></h4> 
-            <p>${blog.description}</p>   
-            <p>(${blog.blogNodeIds.length} blog nodes)</p>           
-          </div>       
-              `;
-        div.innerHTML = innerHtml;
-        list.appendChild(div);
-      }
+// Function to fetch user info
+async function getUserInfo() {
+  const token = getTheToken();
+  const host = configuration.host();
+  const headers = { 'Authorization': `Bearer ${token}` };
+
+  try {
+    const response = await fetch(`${host}/user`, { headers });
+    if (response.status === 401) {
+      logout(); // Handle unauthorized access
+      return null;
     }
-    async function saveBlog() {
-      let title = document.getElementById("title").value;
-      let description = document.getElementById("description").value;
-      let dateTime = document.getElementById("dateTime").value;
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+    return null;
+  }
+}
 
-      let endpoint = host + "/blog";
-      const token = localStorage.getItem("token");
-      let request = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // Include Bearer token in the headers
-        },
-        body: JSON.stringify({ "title": title, "description": description, "dateTime": dateTime })
+// Store user info on login
+async function storeUserInfo() {
+  const userInfo = await getUserInfo();
+  if (userInfo) {
+    localStorage.setItem('userEmail', userInfo.email);
+  }
+}
+
+// Get the user's email from local storage
+function getUserEmail() {
+  return localStorage.getItem('userEmail');
+}
+
+// Save blog function with user email
+async function saveBlog() {
+  let title = document.getElementById("title").value;
+  let description = document.getElementById("description").value;
+  let dateTime = document.getElementById("dateTime").value;
+  let userEmail = getUserEmail();
+
+  let endpoint = `${host}/blog`;
+  const token = getTheToken();
+  let request = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({ "title": title, "userEmail": userEmail, "description": description, "dateTime": dateTime })
+  };
+
+  let response = await fetch(endpoint, request);
+  if (response.status === 200) {
+    alert("The blog was saved successfully!");
+    document.getElementById("blogForm").style.display = "none";
+    location.reload();
+  } else {
+    alert("The blog was not saved. Something went wrong.");
+  }
+}
+
+// Display blogs function filtered by user email
+async function displayTheBlogs() {
+  let response = await fetch(`${host}/blog`);
+  let blogs = await response.json();
+  let userEmail = getUserEmail();
+
+  let list = document.getElementById("list");
+  list.innerHTML = "";
+
+  for (let blog of blogs) {
+    if (blog.userEmail == userEmail) {
+      let div = document.createElement("div");
+      div.id = `${blog.id}`;
+      div.className = "card";
+      div.onclick = function () {
+        location.href = `blog.html?id=${blog.id}`;
       };
+      let innerHtml = `           
+        <div class="container">
+          <h4><b>${blog.title}</b></h4> 
+          <p>${blog.description}</p>   
+          <p>(${blog.blogNodeIds.length} memories)</p>
+          <button onclick="editBlog(${blog.id})">Edit</button>
+          <button onclick="deleteBlog(${blog.id})">Delete</button>   
 
-      let response = await fetch(endpoint, request);
-      if (response.status === 200) {
-        alert("The blog was saved successfully!");
-        document.getElementById("blogForm").style.display = "none";
-        displayTheBlogs();
-      } else {
-        alert("The blog was not saved. Something went wrong.")
-      }
+        </div>       
+      `;
+      div.innerHTML = innerHtml;
+      list.appendChild(div);
     }
-    displayTheBlogs();
+  }
+}
+
+// Refresh blogs every 4 seconds
+function refreshBlogs() {
+  setInterval(displayTheBlogs, 500); // 4000 milliseconds = 4 seconds
+}
+
+// Call the function to refresh the blogs initially
+refreshBlogs();
+
+// Ensure to store user info on login
+storeUserInfo();
+
 
     
   </script>
