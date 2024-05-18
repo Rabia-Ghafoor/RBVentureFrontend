@@ -1,212 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-  <style>
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgb(0, 0, 0);
-      background-color: rgba(0, 0, 0, 0.4);
-      padding-top: 60px;
-    }
-
-    .modal-content {
-      background-color: #fefefe;
-      margin: 5% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-    }
-
-    .close {
-      color: #aaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .close:hover,
-    .close:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
-    }
-
-    /* AddModal class */
-    .addModal {
-      background-color: #ffffff;
-      border: 2px solid #ccc;
-      padding: 20px;
-      margin: 5% auto;
-      width: 70%;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
+    <style>
+      /* CSS for the modal */
+      .modal {
+          display: none; /* Hidden by default */
+          position: fixed; /* Stay in place */
+          z-index: 1; /* Sit on top */
+          left: 0;
+          top: 0;
+          width: 100%; /* Full width */
+          height: 100%; /* Full height */
+          overflow: auto; /* Enable scroll if needed */
+          background-color: rgb(0,0,0); /* Fallback color */
+          background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+          padding-top: 60px;
+      }
+      
+      /* Modal content */
+      .modal-content {
+          background-color: #fefefe;
+          margin: 5% auto; /* 5% from the top and centered */
+          padding: 20px;
+          border: 1px solid #888;
+          width: 80%; /* Could be more or less, depending on screen size */
+      }
+      
+      /* Close button */
+      .close {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+      }
+      
+      .close:hover,
+      .close:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+      }
   </style>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="navbar.css">
-  <link rel="stylesheet" href="cards.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
 </head>
-
 <body>
-  <script src="configuration.js"></script>
+    <script src="configuration.js"></script> 
 
-  <!-- Navigation Bar -->
+    <!-- Navigation Bar -->
   <ul class="topnav">
     <li><a class="active" href="index.html">RBVenture</a></li>
     <li class="right"><a href="login.html">Login</a></li>
     <li class="right"><a href="moments.html"> View your Moments</a></li>
     <li class="right"><a href="team.html">Meet the Team</a></li>
     <li class="right"><a href="beta.html">Beta Access</a></li>
-<<<<<<< Updated upstream
     <li class="right"><a href="contact.html">Contact Us </a></li>
-=======
-  </ul>
->>>>>>> Stashed changes
 
-  <div id="adding-blog-node" class="col-10" style="font-size: 25px">
-    <div class="row">
+</ul>   
+
+<div id="adding-blog-node" class="col-10" style="font-size: 25px">
+  <div class="row">
       <button onclick="openModal()">Add Blog</button>
-    </div>
   </div>
+</div>
 
-  <!-- The Modal -->
-  <div id="myModal" class="modal addModal">
-    <!-- Modal content -->
-    <div class="modal-content">
+<!-- The Modal -->
+<div id="myModal" class="modal">
+  <!-- Modal content -->
+  <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
       <h2>Add Blog</h2>
       <form id="blogForm">
-        <label for="blogTitle">Title:</label>
-        <input type="text" id="blogTitle" name="blogTitle"><br><br>
-        <label for="blogDescription">Description:</label>
-        <textarea id="blogDescription" name="blogDescription"></textarea><br><br>
-        <label for="blogDate">Date:</label>
-        <input type="date" id="blogDate" name="blogDate"><br><br>
-        <label for="blogImage">Image:</label>
-        <input type="file" id="blogImage" name="blogImage"><br><br>
-        <button type="submit">Submit</button>
+          <label for="blogTitle">Title:</label>
+          <input type="text" id="blogTitle" name="blogTitle"><br><br>
+          <label for="blogDescription">Description:</label>
+          <textarea id="blogDescription" name="blogDescription"></textarea><br><br>
+          <label for="blogDate">Date:</label>
+          <input type="date" id="blogDate" name="blogDate"><br><br>
+          <label for="blogImage">Image:</label>
+          <input type="file" id="blogImage" name="blogImage"><br><br>
+          <button type="submit">Submit</button>
       </form>
-    </div>
   </div>
+</div>
 
-  <div class="questions">
-    <h2>Click on the memories to edit information</h2>
-    <h3></h3>
-    <div id="list" class="cards"></div>
-  </div>
-
-  <div id="blogContainer"></div>
 
   <script>
-    let host = getHost();
-    let blognodes = [];
-    let images = [];
+    updateTheNavigationBar();
+// Function to open the modal
+function openModal() {
+            document.getElementById("myModal").style.display = "block";
+        }
 
-    displayBlogNodes();
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById("myModal").style.display = "none";
+        }
 
-    async function getAllBlogNodes() {
-      const token = getTheToken();
-      let host = configuration.host();
-      const headers = {
-        'Authorization': `Bearer ${token}`
-      };
-      return fetch(host + "/blognode", { headers })
-        .then((response) => {
-          if (response.status == 401) {
-            logout();
-          }
-          return response.json();
-        })
-        .catch((error) => {
-          console.log(error);
-          alert("Something went wrong!");
-          return [];
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            var modal = document.getElementById("myModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Function to handle form submission
+        document.getElementById("blogForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent default form submission
+            // Fetch values from form fields
+            var title = document.getElementById("blogTitle").value;
+            var description = document.getElementById("blogDescription").value;
+            var date = document.getElementById("blogDate").value;
+            var imageFile = document.getElementById("blogImage").files[0]; // Assuming only one image file is selected
+            // Perform your logic to add blog node here using the values obtained
+            // For example, you can call the addBlogNode function passing these values
+            // addBlogNode({title: title, description: description, date: date}, imageFile);
+            // Then close the modal
+            closeModal();
         });
-    }
 
-    async function displayBlogNodes() {
-      if (questions.length == 0) {
-        questions = await getAllBlogNodes();
-        //images = await getAllImages();
+
+
+    let message = "";
+        const token = getTheToken();
+
+    let host = getHost();
+    let blognode = [];
+    let images = [];
+    displayBlogNode();
+
+    async function getAllBlogNode() {
+        const token = getTheToken();
+
+        let host = configuration.host();
+        const headers = { 
+          'Authorization': `Bearer ${token}`};
+        return fetch(host + "/blognode", { headers })
+          .then((response) => 
+          {
+            if(response.status == 401) {
+              logout();
+            }
+            return response.json();
+          })
+          .catch((error) => {
+            console.log(error);
+            alert("Something went wrong!");
+            return [];
+          });
       }
 
-      let list = document.getElementById("list");
-      list.innerHTML = "";
+    
+    async function addBlogNode(blognode, imageFile) {
+        
 
-      for (let blognode of blognodes) {
-        let div = document.createElement("div");
-        div.className = "card";
-        let innerHtml = `
-          <img src="${host}/blognode/${blognode.id}/image" alt="question" style="width:100%">
-          <div class="container">
-            <h4><b>${blognode.id}</b></h4>
-            <p>${blognode.description}</p>
-            <p>${blognode.dateTime}</p>
-            <button onclick="editBlogNode(${blognode.id})">Edit</button>
-            <button onclick="deleteBlogNode(${blognode.id})">Delete</button>
-          </div>
-        `;
-        div.innerHTML = innerHtml;
-        list.appendChild(div);
-      }
-    }
-
-    // JavaScript for opening and closing the modal
-    function openModal() {
-      document.getElementById("myModal").style.display = "block";
-    }
-
-    function closeModal() {
-      document.getElementById("myModal").style.display = "none";
-    }
-
-    // Close the modal if the user clicks outside of it
-    window.onclick = function(event) {
-      let modal = document.getElementById("myModal");
-      if (event.target == modal) {
-        modal.style.display = "none";
-      }
-    }
-
-
-    async function saveBlogNode() {
-      let description = document.getElementById("blogDescription").value;
-      let dateTime = document.getElementById("blogDate").value;
-      let userEmail = getUserEmail();
-
-      let endpoint = `${host}/blognode`;
-      const token = getTheToken();
-      let request = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
-          "Authorization": `Bearer ${token}`
+        let request = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                "Access-Control-Allow-Origin": "*",
+                'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ "title": title, "userEmail": userEmail,"description": description, "dateTime": dateTime })
-      };
+        body: JSON.stringify(blognode),
+    };
+    let response = await fetch(host+ `blognode`, request);
+    if(response.status == 200) {
 
-      let response = await fetch(endpoint, request);
-      if (response.status === 200) {
-        alert("The blog was saved successfully!");
-        document.getElementById("blogForm").style.display = "none";
-        location.reload();
+      let id = await response.json();
+      let result = await submitTheImage(id, imageFile);
+      if(result) {
+        message = "Blog Node added successfully";
       } else {
-        alert("The blog was not saved. Something went wrong.");
-      }
+        message = "Blog Node added successfully but image upload failed";
+      } 
+    } else {
+      message = "Blog Node addition failed";
     }
+    alert(message);
+    displayBlogNode();
+    location.reload();
+    }
+  
+  
+  async function submitTheImage(id, imageFile) {
+    const token = getTheToken();
+    let formData = new FormData();
+    formData.append('file', imageFile);
+    let request = {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+    },
+    body: formData,
+  };
+  let response = await fetch(host+ `blognode/${id}/image`, request);
+  let result = await response.json();
+  return result;
+  }
+
+
   </script>
 </body>
-
 </html>
+
+

@@ -89,21 +89,14 @@
 
 <body>
   <script src="configuration.js"></script>
-   <!-- Navigation Bar -->
-   <ul class="topnav">
+  <ul class="topnav">
     <li><a class="active" href="index.html">RBVenture</a></li>
     <li class="right"><a href="moments.html"> View your Moments</a></li>
     <li class="right"><a href="team.html">Meet the Team</a></li>
     <li class="right"><a href="beta.html">Beta Access</a></li>
-<<<<<<< Updated upstream
-    <li class="right"><a href="contact.html">Contact Us </a></li>
-</ul> 
-  
-=======
     <li class="right"><a href="login.html">Login</a></li>
 
 </ul>  
->>>>>>> Stashed changes
 
   <button id="newMemoryBtn">New Memory</button>
   <div id="popup" class="popup">
@@ -299,9 +292,10 @@ async function displayTheBlogs() {
           <h4><b>${blog.title}</b></h4> 
           <p>${blog.description}</p>   
           <p>(${blog.blogNodeIds.length} memories)</p>
+          <button onclick="addBlog(${blog.id})">Add</button>
           <button onclick="editBlog(${blog.id})">Edit</button>
           <button onclick="deleteBlog(${blog.id})">Delete</button>   
-
+                  
         </div>       
       `;
       div.innerHTML = innerHtml;
