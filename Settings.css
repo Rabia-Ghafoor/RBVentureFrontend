@@ -1,0 +1,19 @@
+.Hello h1 {
+    font-size: 50px;
+    animation: fadeIn 5s;
+    color: #293653;
+    text-align: center;
+}
+
+#container {
+    display: flex;
+    font-size: 25px;
+}
+#menu {
+    width: 30%; 
+    background-color: #D2B48C;
+}
+#content {
+    width: 70%; 
+}
+

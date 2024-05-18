@@ -62,3 +62,8 @@ ul.topnav {
 body {
   background-color: #f8f4ea; /* Set the background color */
 }
+
+.navbar-icon {
+  width: 22px; 
+  height: 22px; 
+}
