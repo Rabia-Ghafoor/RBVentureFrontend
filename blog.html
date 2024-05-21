@@ -89,10 +89,23 @@
   </div>
 </div>
 
+<div id="list" class="cards"></div>
+
+
 
   <script>
     updateTheNavigationBar();
+
+
+    let message = "";
+        const token = getTheToken();
+
+    let host = getHost();
+    let blognodes = [];
+    let images = [];
 // Function to open the modal
+
+
 function openModal() {
             document.getElementById("myModal").style.display = "block";
         }
@@ -122,17 +135,13 @@ function openModal() {
             // For example, you can call the addBlogNode function passing these values
             // addBlogNode({title: title, description: description, date: date}, imageFile);
             // Then close the modal
+
+            addBlogNode({title: title, description: description, date: date}, imageFile);
             closeModal();
         });
 
 
 
-    let message = "";
-        const token = getTheToken();
-
-    let host = getHost();
-    let blognode = [];
-    let images = [];
     displayBlogNode();
 
     async function getAllBlogNode() {
@@ -169,7 +178,7 @@ function openModal() {
         },
         body: JSON.stringify(blognode),
     };
-    let response = await fetch(host+ `blognode`, request);
+    let response = await fetch(host+ `/blognode`, request);
     if(response.status == 200) {
 
       let id = await response.json();
@@ -186,6 +195,33 @@ function openModal() {
     displayBlogNode();
     location.reload();
     }
+    async function displayBlogNode() {
+        if (blognodes.length == 0) {
+          blognodes = await getAllBlogNode;
+          
+        }
+        let list = document.getElementById("list");
+        list.innerHTML = "";
+
+        for (let blognode of blognodes) {
+          let div = document.createElement("div");
+          div.className = "card";
+          let innerHtml = `
+         
+        <img src="${host}/blognode/${blognode.id}/image" alt="blognode" style="width:100%">
+        <div class="container">
+          <h4><b>${blognode.id}</b></h4> 
+          <p>${blognode.userEmail}</p>
+          <p>${blognode.description}</p>
+          <p>${blognode.dateTime}</p>
+          <p>${blognode.blogNodeId}</p>
+        </div>
+            `;
+          div.innerHTML = innerHtml;
+          list.appendChild(div);
+        }
+      }
+
   
   
   async function submitTheImage(id, imageFile) {
@@ -199,10 +235,18 @@ function openModal() {
     },
     body: formData,
   };
-  let response = await fetch(host+ `blognode/${id}/image`, request);
+  let response = await fetch(host+ `/blognode/${id}/image`, request);
   let result = await response.json();
   return result;
   }
+
+  // Refresh blogs every 4 seconds
+function refreshBlogs() {
+  setInterval(displayBlogNode, 500); // 4000 milliseconds = 4 seconds
+}
+
+// Call the function to refresh the blogs initially
+refreshBlogs();
 
 
   </script>

@@ -11,51 +11,57 @@
 </head>
 
 <style>
-  /* Modal styles */
-  .modal {
-    display: none;
-    /* Hidden by default */
-    position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%;
-    /* Full width */
-    height: 100%;
-    /* Full height */
-    overflow: auto;
-    /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Black w/ opacity */
-  }
 
-  /* Modal content box */
-  .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-  }
+body {
+  font-family: 'Arial', sans-serif; /* Global font style */
+}
+/* Modal styles */
+.modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
+}
 
-  /* Close button */
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-  }
+/* Modal content box */
+.modal-content {
+  background-color: #fff;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
 
-  .close:hover,
-  .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
+/* Close button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
 
-  .popup {
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.popup {
   display: none;
   position: fixed;
   top: 0;
@@ -71,8 +77,8 @@
   width: 50%;
   margin: 10% auto;
   padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .close {
@@ -84,6 +90,45 @@
 .close:hover {
   color: red;
 }
+
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+  font-size: 14px;
+  color: #333;
+}
+
+input[type="text"],
+textarea,
+input[type="datetime-local"] {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: vertical;
+}
+
 
 </style>
 
@@ -293,7 +338,6 @@ async function displayTheBlogs() {
           <h4><b>${blog.title}</b></h4> 
           <p>${blog.description}</p>   
           <p>(${blog.blogNodeIds.length} memories)</p>
-          <button onclick="addBlog(${blog.id})">Add</button>
           <button onclick="editBlog(${blog.id})">Edit</button>
           <button onclick="deleteBlog(${blog.id})">Delete</button>   
                   
@@ -316,6 +360,20 @@ refreshBlogs();
 // Ensure to store user info on login
 storeUserInfo();
 
+
+async function editBlog(id) {
+  let response = await fetch(`${host}/blog/${id}`);
+  let blog = await response.json();
+  document.getElementById("title").value = blog.title;
+  document.getElementById("description").value = blog.description;
+  document.getElementById("dateTime").value = blog.dateTime;
+  blogId = blog.id;
+
+  let popup = document.getElementById("popup");
+  popup.style.display = "block";
+  
+  
+}
 
     
   </script>
