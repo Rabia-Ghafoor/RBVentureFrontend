@@ -161,6 +161,25 @@ textarea {
     </div>
   </div>
 
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <span class="close">&times;</span>
+      <h2>edit blog</h2>
+      <form id="editBlog">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" name="title"><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description"></textarea><br>
+        <label for="dateTime">Date and Time:</label><br>
+        <input type="datetime-local" id="dateTime" name="dateTime"><br>
+        <button type="button" onclick="editBlog()">Edit it!</button>
+
+      </form>
+
+    </div>
+
+  </div>
+
   </div>
   <div class="questions">
     <h2>click on the memories to edit information</h2>
@@ -179,6 +198,8 @@ textarea {
   const newMemoryBtn = document.getElementById("newMemoryBtn");
   const popup = document.getElementById("popup");
   const closeBtn = document.querySelector(".close");
+  const editBtn = document.getElementById("editBtn");
+  const deleteBtn = document.getElementById("deleteBtn");
   const memoryForm = document.getElementById("memoryForm");
 
   newMemoryBtn.addEventListener("click", function() {
@@ -316,7 +337,6 @@ async function saveBlog() {
   }
 }
 
-// Display blogs function filtered by user email
 async function displayTheBlogs() {
   let response = await fetch(`${host}/blog`);
   let blogs = await response.json();
@@ -338,9 +358,8 @@ async function displayTheBlogs() {
           <h4><b>${blog.title}</b></h4> 
           <p>${blog.description}</p>   
           <p>(${blog.blogNodeIds.length} memories)</p>
-          <button onclick="editBlog(${blog.id})">Edit</button>
-          <button onclick="deleteBlog(${blog.id})">Delete</button>   
-                  
+          <button onclick="editBlog(${blog.id}); event.stopPropagation();">Edit</button>
+          <button onclick="deleteBlog(${blog.id}); event.stopPropagation();">Delete</button>   
         </div>       
       `;
       div.innerHTML = innerHtml;
@@ -348,6 +367,7 @@ async function displayTheBlogs() {
     }
   }
 }
+
 
 // Refresh blogs every 4 seconds
 function refreshBlogs() {
@@ -371,9 +391,32 @@ async function editBlog(id) {
 
   let popup = document.getElementById("popup");
   popup.style.display = "block";
-  
-  
+
+  const token = getTheToken();
+  let request = {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({ "title": title, "description": description, "dateTime": dateTime })
+  };
+  response = await fetch(response, request);
+
+  if (response.status == 200) {
+    alert("The blog was updated successfully!");
+    location.reload();
+  } else {
+    alert("The blog was not updated. Something went wrong.");
+  }
+
 }
+
+
+
+
+
+
 
     
   </script>
