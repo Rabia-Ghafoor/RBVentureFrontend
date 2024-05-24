@@ -14,6 +14,11 @@
     background-color: #D2B48C;
 }
 #content {
-    width: 70%; 
+    width: 110%; 
 }
+
+.icon {
+    width: 32px; 
+    height: 32px; 
+  }
 
